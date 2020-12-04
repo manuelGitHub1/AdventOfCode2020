@@ -6,18 +6,21 @@ import java.util.List;
 public class Day03 {
 
    public static void main( String[] args ) {
+
       final List<String> strings = Util.fileAsStrings("src/main/resources/day03/input.txt");
       final HashMap<Integer, List<Integer>> treesExpanded = extrapolateData(findTrees(strings), 7);
 
       final int hits = travelAndHitTrees(3, 1, treesExpanded);
+      assert hits == 257;
       System.out.println("Part1: You hit " + hits + " trees");
+
 
       int product = hits;
       product *= travelAndHitTrees(1, 1, treesExpanded);
       product *= travelAndHitTrees(5, 1, treesExpanded);
       product *= travelAndHitTrees(7, 1, treesExpanded);
       product *= travelAndHitTrees(1, 2, treesExpanded);
-
+      assert product == 1744787392;
       System.out.println("Part1: Multiplication result of hitted trees is " + product);
    }
 
