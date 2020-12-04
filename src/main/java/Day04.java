@@ -29,26 +29,10 @@ public class Day04 {
       _logger.info("Collected " + passports.size() + " passports");
       final long invalidPassports = passports.stream().filter(p -> !p.validate()).count();
       final long validPassports = passports.stream().filter(Passport::validate).count();
-      assert validPassports > 181; // 182 should be correct?
-      _logger.info("Part1: Number of valid passports " + validPassports);
+      assert validPassports == 182;
       _logger.info("Part1 - debug - : Number of invalid passports " + invalidPassports);
+      _logger.info("Part1: Number of valid passports " + validPassports);
    }
-
-   enum Field {
-      byr, // (Birth Year)
-      iyr, // (Issue Year)
-      eyr, // (Expiration Year)
-      hgt, // (Height)
-      hcl, // (Hair Color)
-      ecl, // (Eye Color)
-      pid, // (Passport ID)
-      cid; // (Country ID)
-
-      public boolean isRequired() {
-         return Field.cid != this;
-      }
-   }
-
 
    static class Passport {
 
