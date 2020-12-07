@@ -2,13 +2,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 
 public class Day04 {
 
    private static final Logger _logger = Logger.getLogger(Day04.class.getName());
-
 
    public static void main( String[] args ) {
 
@@ -23,7 +24,7 @@ public class Day04 {
             passport = new Passport();
          }
       }
-      if ( passport._fields.size() > 0 ){
+      if ( passport._fields.size() > 0 ) {
          passports.add(passport);
       }
       _logger.info("Collected " + passports.size() + " passports");
@@ -32,6 +33,9 @@ public class Day04 {
       assert validPassports == 182;
       _logger.info("Part1 - debug - : Number of invalid passports " + invalidPassports);
       _logger.info("Part1: Number of valid passports " + validPassports);
+
+      final long validPassportsExtendedValidation = passports.stream().filter(Passport::validateExtended).count();
+      _logger.info("Part2: Number of valid passports " + validPassportsExtendedValidation);
    }
 
    static class Passport {
@@ -62,6 +66,24 @@ public class Day04 {
             }
          }
          return true;
+      }
+
+      public boolean validateExtended() {
+         if ( !validate() ) {
+            return false;
+         }
+
+         final Set<Field> fieldsWithInvalidContent = _fields.keySet().stream(). //
+               filter(f -> !f.validateFieldContent(_fields.get(f))).collect(Collectors.toSet());
+
+         if ( fieldsWithInvalidContent.isEmpty() ) {
+            return true;
+         }
+
+         final StringBuilder errorMessage = new StringBuilder("Invalid field content found for field(s): ");
+         fieldsWithInvalidContent.forEach(f -> errorMessage.append(f).append(":").append(_fields.get(f)).append(" "));
+         _logger.info(errorMessage.toString());
+         return false;
       }
    }
 
