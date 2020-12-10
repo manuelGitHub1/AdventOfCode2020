@@ -1,13 +1,12 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 
 public class Day06 {
 
-   private static final Logger _logger = Logger.getLogger(Day06.class.getName());
 
    public static void main( String[] args ) {
       final List<String> strings = Util.getAoCInput(Day06.class.getName());
@@ -17,25 +16,24 @@ public class Day06 {
          if ( line.isBlank() ) {
             groupAnswers.add(groupAnswer);
             groupAnswer = new GroupAnswer();
+         } else {
+            groupAnswer.addAnswer(line);
          }
-         groupAnswer.addAnswer(line);
       }
-      if ( !groupAnswer.hasAnswers() ) {
+      if ( groupAnswer.hasAnswers() ) {
          groupAnswers.add(groupAnswer);
       }
 
       final int sum = groupAnswers.stream().mapToInt(GroupAnswer::getAllPositiveAnswers).sum();
       assert sum == 6351;
       System.out.println("Part1: Sum of positive answers: " + sum);
+      final long sumAnswersEveryOneVotedFor = groupAnswers.stream().mapToLong(GroupAnswer::getAllPositiveAnswersEveryoneVotedFor).sum();
+      System.out.println("Part2: Sum of positive answers everyone of a group voted for: " + sumAnswersEveryOneVotedFor);
    }
 
    static class GroupAnswer {
 
       private final List<String> _allGroupAnswers = new ArrayList<>();
-
-      public boolean hasAnswers(){
-         return !_allGroupAnswers.isEmpty();
-      }
 
       public void addAnswer( String string ) {
          _allGroupAnswers.add(string);
@@ -50,6 +48,22 @@ public class Day06 {
             }
          });
          return _answers.size();
+      }
+
+      public long getAllPositiveAnswersEveryoneVotedFor() {
+         final int numberOfGroupMembers = _allGroupAnswers.size();
+         final HashMap<Character, Integer> answerToFrequencyMap = new HashMap<>();
+         _allGroupAnswers.forEach(a -> {
+            final char[] chars = a.toCharArray();
+            for ( Character aChar : chars ) {
+               answerToFrequencyMap.merge(aChar, 1, Integer::sum);
+            }
+         });
+         return answerToFrequencyMap.entrySet().stream().filter(e -> e.getValue() == numberOfGroupMembers).count();
+      }
+
+      public boolean hasAnswers() {
+         return !_allGroupAnswers.isEmpty();
       }
    }
 
