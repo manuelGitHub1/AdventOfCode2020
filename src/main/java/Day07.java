@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -23,34 +22,21 @@ public class Day07 {
 
    public static void main( String[] args ) {
       final List<String> strings = Util.getAoCInput(Day07.class.getName());
-      Set<String> bagTypes = new HashSet<>();
-      final HashMap<String, HashMap<String, Integer>> bagHierarchy = getStringListHashMap(strings, bagTypes);
-      bagHierarchy.entrySet().stream().forEach(System.out::println);
-      _logger.info("Different types of bags: " + bagTypes.size());
+      final HashMap<String, HashMap<String, Integer>> bagHierarchy = buildBagHierarchy(strings);
+      bagHierarchy.entrySet().forEach(e -> _logger.info(e.toString()));
       _logger.info("Different types of bags: " + bagHierarchy.size());
-      // lookup for shiny gold
       final Set<String> bagsThatCanContainShinyGold = new HashSet<>();
-      final Set<String> directContainer = lookupForPossibleContainerBags(bagHierarchy, "shiny gold");
-      bagsThatCanContainShinyGold.addAll(directContainer);
-      _logger.info("Bags that can contain shiny gold directly: " + bagsThatCanContainShinyGold.size());
-      final Set<String> secondInstance = new HashSet<>();
-      for ( String bagType : directContainer ) {
-         secondInstance.addAll(lookupForPossibleContainerBags(bagHierarchy, bagType));
-      }
-      bagsThatCanContainShinyGold.addAll(secondInstance);
-      for ( String bagType : secondInstance ) {
-         bagsThatCanContainShinyGold.addAll(lookupForPossibleContainerBags(bagHierarchy, bagType));
-      }
-      System.out.println("Part1: Bags that can contain shiny gold: " + (bagsThatCanContainShinyGold.size()));
+      lookupForPossibleContainerBags(bagsThatCanContainShinyGold, bagHierarchy, "shiny gold");
+      System.out.println("Part1: Bags that can contain shiny gold (direct/indirect): " + (bagsThatCanContainShinyGold.size()));
+      assert bagsThatCanContainShinyGold.size() == 185;
    }
 
-   private static HashMap<String, HashMap<String, Integer>> getStringListHashMap( List<String> strings, Set<String> bagTypes ) {
+   private static HashMap<String, HashMap<String, Integer>> buildBagHierarchy( List<String> strings ) {
       HashMap<String, HashMap<String, Integer>> bagHierarchy = new HashMap<>();
       for ( String line : strings ) {
          final Matcher matcher = _bagPattern.matcher(line);
          if ( matcher.matches() ) {
             final String bagType = matcher.group(1);
-            bagTypes.add(bagType);
             if ( !bagHierarchy.containsKey(bagType) ) {
                bagHierarchy.put(bagType, new HashMap<>());
             }
@@ -76,14 +62,18 @@ public class Day07 {
       return bagHierarchy;
    }
 
-   @org.jetbrains.annotations.NotNull
-   private static Set<String> lookupForPossibleContainerBags( HashMap<String, HashMap<String, Integer>> bagHierarchy, String lookupType ) {
+   private static void lookupForPossibleContainerBags( Set<String> result, HashMap<String, HashMap<String, Integer>> bagHierarchy, String lookupType ) {
       final Set<String> bagsThatCanContainShinyGold = bagHierarchy.entrySet()
             .stream()
             .filter(e -> e.getValue().containsKey(lookupType))
-            .map(e -> e.getKey())
+            .map(Map.Entry::getKey)
             .collect(Collectors.toSet());
-      return bagsThatCanContainShinyGold;
+      result.addAll(bagsThatCanContainShinyGold);
+      if ( bagsThatCanContainShinyGold.isEmpty() ) {
+         return;
+      }
+      bagsThatCanContainShinyGold.forEach(t -> lookupForPossibleContainerBags(result, bagHierarchy, t));
+
    }
 
 }
