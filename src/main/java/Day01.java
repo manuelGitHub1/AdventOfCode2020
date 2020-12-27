@@ -1,4 +1,3 @@
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,19 +8,20 @@ import java.util.Scanner;
 
 public class Day01 {
 
-   static int twentytwenty = 2020;
-
-   static final List<Integer> ints = getIntegers();
+   static int _2020 = 2020;
 
    public static void main( String[] args ) {
+      final List<Integer> ints = getIntegers();
+
       firstPart(ints);
 
       secondPart(ints);
    }
 
-   private static boolean findTheNumber( int twentytwenty, Collection<Integer> ints, Integer... anInt ) {
+
+   private static boolean findTheNumber( int base, Collection<Integer> ints, Integer... anInt ) {
       final int sum = Arrays.stream(anInt).mapToInt(Integer::intValue).sum();
-      final int subtractResult = twentytwenty - sum;
+      final int subtractResult = base - sum;
       if ( ints.contains(subtractResult) ) {
          System.out.println("Hit: " + Arrays.toString(anInt) + ", " + subtractResult);
          int product = 1;
@@ -36,7 +36,7 @@ public class Day01 {
 
    private static void firstPart( List<Integer> ints ) {
       for ( Integer anInt : ints ) {
-         if ( findTheNumber(twentytwenty, ints, anInt) ) {
+         if ( findTheNumber(_2020, ints, anInt) ) {
             return;
          }
       }
@@ -60,8 +60,8 @@ public class Day01 {
          for ( int j = i + 1; j < ints.size(); j++ ) {
             int second = ints.get(j);
             final int firstAdditionResult = first + second;
-            if ( firstAdditionResult < twentytwenty ) {
-               if ( findTheNumber(twentytwenty, ints, first, second) ) {
+            if ( firstAdditionResult < _2020 ) {
+               if ( findTheNumber(_2020, ints, first, second) ) {
                   return;
                }
             }
