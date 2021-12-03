@@ -1,5 +1,6 @@
 <component name="ProjectCodeStyleConfiguration">
   <state>
+    <option name="USE_PER_PROJECT_SETTINGS" value="true" />
     <option name="PREFERRED_PROJECT_CODE_STYLE" value="C24 Java Formatter Conventions" />
   </state>
 </component>

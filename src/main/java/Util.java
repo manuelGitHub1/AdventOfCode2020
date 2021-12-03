@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.jetbrains.annotations.NotNull;
+
 
 public class Util {
 
@@ -26,7 +28,17 @@ public class Util {
 
    public static List<String> getAoCInput(final String day ) {
       assert day != null;
-      return fileAsStrings("src/main/resources/" + day.toLowerCase() + "/input.txt");
+      return getInput(day, "/input.txt");
+   }
+
+   public static List<String> getAoCInputTest(final String day ) {
+      assert day != null;
+      return getInput(day, "/test.txt");
+   }
+
+   @NotNull
+   private static List<String> getInput( String day, String s ) {
+      return fileAsStrings("src/main/resources/" + day.toLowerCase() + s);
    }
 
    // copied from https://mkyong.com/java/java-read-a-file-from-resources-folder/
@@ -35,7 +47,7 @@ public class Util {
    public static InputStream getFileFromResourceAsStream( String fileName ) {
 
       // The class loader that loaded the class
-      ClassLoader classLoader = Day01.class.getClassLoader();
+      ClassLoader classLoader = Util.class.getClassLoader();
       InputStream inputStream = classLoader.getResourceAsStream(fileName);
 
       // the stream holding the file content
